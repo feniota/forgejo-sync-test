@@ -1,0 +1,38 @@
+
+name: Sync GitHub contribution branch to Forgejo
+
+on:
+  push:
+    branches:
+      - github
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-forgejo-contributions
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out contribution branch
+        uses: actions/checkout@v4
+        with:
+          ref: github
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Sync branch and manage Forgejo PR
+        shell: bash
+        env:
+          FORGEJO_BASE_URL: ${{ vars.FORGEJO_BASE_URL }} # https://forgejo.example.org/
+          FORGEJO_OWNER: ${{ vars.FORGEJO_OWNER }}
+          FORGEJO_REPO: ${{ vars.FORGEJO_REPO }}
+          FORGEJO_OPERATOR: ${{ vars.FORGEJO_OPERATOR }} # The bot account username to open that PR
+          FORGEJO_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+        run: node .github/scripts/sync-forgejo.mjs
