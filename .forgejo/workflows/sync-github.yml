@@ -1,0 +1,30 @@
+
+name: Sync main branch to GitHub
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: hiro # runners:base image on HIRO
+
+    steps:
+      - name: Check out contribution branch
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Sync branch and manage Forgejo PR
+        shell: bash
+        env:
+          GH_PUSH_REPO: ${{ vars.GH_PUSH_REPO }}
+          GH_PUSH_USER: ${{ vars.GH_PUSH_USER }}
+          GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+        run: node .forgejo/scripts/sync-github.mjs

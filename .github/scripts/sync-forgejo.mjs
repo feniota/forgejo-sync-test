@@ -28,7 +28,10 @@ const SOURCE_BRANCH = "github";
 const TARGET_BRANCH = "main";
 
 const base_url = new URL(FORGEJO_BASE_URL);
-const api_url = new URL(`/api/v1/repos/${FORGEJO_OWNER}/${FORGEJO_REPO}/`, base_url);
+const api_url = new URL(
+  `/api/v1/repos/${FORGEJO_OWNER}/${FORGEJO_REPO}/`,
+  base_url,
+);
 const git_url = new URL(`/${FORGEJO_OWNER}/${FORGEJO_REPO}.git`, base_url);
 git_url.username = FORGEJO_OPERATOR;
 git_url.password = FORGEJO_TOKEN;
@@ -37,7 +40,7 @@ function git(...args) {
   const redacted_args = args.map((elem) =>
     elem
       .replaceAll(FORGEJO_OPERATOR, "[OPERATOR]")
-      .replaceAll(FORGEJO_TOKEN, "[TOKEN]"),
+      .replaceAll(FORGEJO_TOKEN, "[TOKEN]")
   );
   console.log(`+ git ${redacted_args.join(" ")}`);
 
