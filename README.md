@@ -1,3 +1,3 @@
 # gh-sync-test
 
-test syncing
+test test 1 2 1 2 
