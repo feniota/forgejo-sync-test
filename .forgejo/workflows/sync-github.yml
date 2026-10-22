@@ -8,9 +8,6 @@ on:
 
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   sync:
     runs-on: hiro # runners:base image on HIRO
