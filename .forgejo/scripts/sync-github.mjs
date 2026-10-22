@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 const env = process.env;
 
 const required = [
