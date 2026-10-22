@@ -1,8 +1,9 @@
-
-name: Sync GitHub contribution branch to Forgejo
+name: Sync GitHub contributions to Forgejo
 
 on:
-  push:
+  pull_request_target:
+    types:
+      - closed
     branches:
       - github
 
@@ -17,22 +18,27 @@ concurrency:
 
 jobs:
   sync:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out contribution branch
+      # The workflow and script always come from the trusted default branch.
+      # Never check out or execute code from the contribution branch here.
+      - name: Check out the trusted default branch
         uses: actions/checkout@v7
         with:
-          ref: github
+          ref: main
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: Sync branch and manage Forgejo PR
+      - name: Push merged contributions and manage the Forgejo PR
         shell: bash
         env:
-          FORGEJO_BASE_URL: ${{ vars.FORGEJO_BASE_URL }} # https://forgejo.example.org/
+          FORGEJO_BASE_URL: ${{ vars.FORGEJO_BASE_URL }}
+          FORGEJO_GIT_URL: ${{ vars.FORGEJO_GIT_URL }}
           FORGEJO_OWNER: ${{ vars.FORGEJO_OWNER }}
           FORGEJO_REPO: ${{ vars.FORGEJO_REPO }}
-          FORGEJO_OPERATOR: ${{ vars.FORGEJO_OPERATOR }} # The bot account username to open that PR
+          FORGEJO_OPERATOR: ${{ vars.FORGEJO_OPERATOR }}
           FORGEJO_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+          GH_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_PR_URL: ${{ github.event.pull_request.html_url }}
         run: node .github/scripts/sync-forgejo.mjs

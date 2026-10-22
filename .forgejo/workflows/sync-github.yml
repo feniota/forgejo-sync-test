@@ -1,5 +1,4 @@
-
-name: Sync main branch to GitHub
+name: Sync main and github to GitHub
 
 on:
   push:
@@ -10,7 +9,7 @@ on:
 
 jobs:
   sync:
-    runs-on: hiro # runners:base image on HIRO
+    runs-on: hiro
 
     steps:
       - name: Check out repository
@@ -19,10 +18,15 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Sync branch to GitHub
+      - name: Sync branches to GitHub
         shell: bash
         env:
           GH_PUSH_REPO: ${{ vars.GH_PUSH_REPO }}
           GH_PUSH_USER: ${{ vars.GH_PUSH_USER }}
           GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+          FJ_PUSH_REPO: ${{ vars.FJ_PUSH_REPO }}
+          FJ_PUSH_USER: ${{ vars.FJ_PUSH_USER }}
+          FJ_PUSH_TOKEN: ${{ secrets.FJ_PUSH_TOKEN }}
+          SYNC_BOT_NAME: ${{ vars.SYNC_BOT_NAME }}
+          SYNC_BOT_EMAIL: ${{ vars.SYNC_BOT_EMAIL }}
         run: node .forgejo/scripts/sync-github.mjs
