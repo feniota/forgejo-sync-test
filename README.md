@@ -1,7 +1,3 @@
 # gh-sync-test
 
-test test 1 2 1 2 
-
-33 44 55 66
-
-676767676767676767
+This repository is a test or example of how to maintain a project in private Forgejo forge while accepting contributions from GitHub.
